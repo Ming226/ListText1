@@ -1,0 +1,252 @@
+#include<iostream>
+#include<cstdlib>
+using namespace std;
+
+struct Node 
+{
+	char name[10];
+	char number[10];
+	Node * next;
+	Node();
+	Node(Node * link );
+};
+//不含参数的初始化
+Node::Node()
+{
+	next = NULL;
+}
+//指针域为link的节点
+Node::Node(Node * link )
+{
+	next = NULL;
+	cout << "请输入姓名：" << endl;
+	cin >> name;
+	cout << "请输入电话" << endl;
+	cin >> number;
+}
+
+class MyList
+{
+	protected:
+		Node * head;
+		Node * Getptr(int postion) const; //返回指向第postion个位置的指针
+		void Init();
+
+	public:
+		MyList();                                                  //无参构造函数
+		virtual ~MyList();                                         //析构函数
+		int longth() const;                                        //求线性表长度
+		void Empty() const;                                        //判断表是否为空
+		void Clear();                                              //清空线性表
+		void traverse(void show(const char *a,const char *b)) const;//遍历线性表并打印元素
+		void GetNode(int postion) const;                           //获得第postion位置的节点
+		void SetNode(int postion);                                 //设置第postion个位置的节点
+		void Insert(int postion);                                  //插入元素
+		void Delete(int postion);                                  //删除元素
+		//尚未实现：：MyList(const MyList &copy);                                //复制构造函数；
+		//尚未实现：：MyList &operator=(const MyList &copy);                     //重载赋值运算符
+};
+MyList::MyList()
+{
+	Init();
+}
+
+MyList::~MyList()
+{
+	Clear();
+	delete(head);
+}
+void show(const char *a, const char *b)
+{
+	cout << a << endl << b << endl;
+}
+
+//返回第postion个节点的指针
+Node * MyList::Getptr(int postion) const
+{
+	Node *ptr = head;
+	int nowPos = 0;
+
+	while (ptr != NULL && nowPos < postion)
+	{
+		ptr = ptr -> next;
+		nowPos++;
+	}
+	
+	if (ptr != NULL && nowPos == postion)
+	{
+		return ptr;
+		cout << "查找成功" << endl;
+	}
+	else
+	{
+		cout << "查找失败" << endl;
+	}
+}
+
+//初始化线性表
+void MyList::Init()
+{
+	head = new Node();
+}
+
+//线性表长度
+int MyList::longth() const
+{
+	int count = 0;
+
+	for (Node *ptr = head->next; ptr != NULL; ptr = ptr->next)
+	{
+		count++;
+	}
+
+	return count;
+}
+
+//判断表空？
+void MyList::Empty() const
+{
+	if (head->next == NULL)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+
+}
+
+//清空
+void MyList::Clear()
+{
+	while (longth() > 0)
+	{
+		Delete(1);
+	}
+}
+
+//遍历
+void MyList::traverse(void show(const char *a, const char *b)) const
+{
+	for (Node *ptr = head->next; ptr != NULL; ptr = ptr->next)
+	{
+		show(ptr->name, ptr->number);
+	}
+}
+
+//获取第pos个位置
+void MyList::GetNode(int postion) const
+{
+	if (postion < 1 || postion > longth())
+	{
+		cout << "输入参数错误" << endl;
+	}
+	else
+	{
+		Node *ptr = Getptr(postion);
+		show(ptr->name, ptr->number);
+	}
+}
+
+//设置第pos个位置
+void MyList::SetNode(int postion) 
+{
+	if (postion < 1 || postion > longth())
+	{
+		cout << "输入参数错误" << endl;
+	}
+	else
+	{
+		Node *ptr = Getptr(postion);
+		cout << "请输入修改姓名" << endl;
+		cin >> ptr->name;
+		cout << "请输入修改电话号码" << endl;
+		cin >> ptr->number;
+	}
+
+}
+
+//插入
+void MyList::Insert(int postion)
+{
+	if (postion < 1 || postion > longth() + 1)
+	{
+		cout << "输入参数错误" << endl;
+	}
+	else
+	{
+		Node *ptr = Getptr(postion - 1);
+		Node *newptr = new Node(ptr->next);
+		ptr->next = newptr;
+		cout << "插入成功" << endl;
+	}
+}
+
+//删除
+void MyList::Delete(int postion)
+{
+	if (postion < 1 || postion > longth())
+	{
+		cout << "输入参数错误" << endl;
+	}
+	else
+	{
+		Node *ptr = Getptr(postion - 1);
+		Node *newptr = ptr->next;
+		ptr->next = newptr->next;
+		delete newptr;
+		cout << "删除成功" << endl;
+	}
+} 
+
+
+int main()
+{
+	MyList first;
+	int x = 1;
+	int op;
+	int a;
+	cout << "请选择功能" << endl
+			<< "1:线性表长度" << endl
+			<< "2:线性表是否为空？" << endl
+			<< "3:将线性表清空" << endl
+			<< "4:遍历线性表" << endl
+			<< "5:返回指定位置的元素" << endl
+			<< "6:设置指定位置的元素" << endl
+			<< "7:插入元素" << endl
+			<< "8：删除元素" << endl
+			<< "0:退出" << endl;
+	while (x)
+	{
+		
+		cin >> op ;
+		a = 0;
+		switch (op)
+		{
+			case 1:
+				cout <<"长度为" << first.longth() << endl; break;
+			case 2:
+				first.Empty(); break;
+			case 3:
+				first.Clear(); break;
+			case 4:
+				first.traverse(&show); break;
+			case 5:
+				cout << "请选择位置" << endl;
+				cin >> a;
+				first.GetNode(a); break;
+			case 6:
+				cout << "请选择位置" << endl;
+				cin >> a; 
+				first.SetNode(a); break;
+			case 7:
+				cout << "请选择位置" << endl;
+				cin >> a;
+				first.Insert(a); break;
+			case 8:
+				cout << "请选择位置" << endl;
+				cin >> a;
+				first.Delete(a); break;
+			case 0:
+				x = 0; break;
+		}
+	}
+	return 0;
+}
